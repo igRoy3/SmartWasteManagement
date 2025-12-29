@@ -27,3 +27,22 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Django/Python backend
+backend/venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/media/
+backend/staticfiles/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+backend/dist/
+backend/build/
