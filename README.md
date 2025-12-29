@@ -96,6 +96,8 @@ SmartWasteManagement/
 
 The backend will be available at `http://localhost:8000`
 
+**Note:** For production, set environment variables for SECRET_KEY, DEBUG=False, and ALLOWED_HOSTS.
+
 ### Frontend Setup
 
 1. **Navigate to mobile directory:**
@@ -108,9 +110,29 @@ The backend will be available at `http://localhost:8000`
    flutter pub get
    ```
 
-3. **Update API URL:**
-   - Edit `lib/utils/api_constants.dart`
-   - Update `baseUrl` to your backend URL
+3. **Configure API URL:**
+   - **Option 1 (Recommended):** Use environment variable:
+     ```bash
+     flutter run --dart-define=API_URL=http://your-backend-url:8000
+     ```
+   - **Option 2:** Edit `lib/utils/api_constants.dart` and change the `defaultValue`
+   
+   **Important:** 
+   - For Android emulator: use `http://10.0.2.2:8000`
+   - For iOS simulator: use `http://localhost:8000`
+   - For real device: use your computer's IP or production URL
+
+3. **Configure API URL:**
+   - **Option 1 (Recommended):** Use environment variable:
+     ```bash
+     flutter run --dart-define=API_URL=http://your-backend-url:8000
+     ```
+   - **Option 2:** Edit `lib/utils/api_constants.dart` and change the `defaultValue`
+   
+   **Important:** 
+   - For Android emulator: use `http://10.0.2.2:8000`
+   - For iOS simulator: use `http://localhost:8000`
+   - For real device: use your computer's IP or production URL
 
 4. **Add Google Maps API Key (Optional):**
    - Get an API key from Google Cloud Console
