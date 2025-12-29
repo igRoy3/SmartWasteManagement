@@ -30,19 +30,19 @@ doc/api/
 
 # Django/Python backend
 backend/venv/
-backend/__pycache__/
-backend/*.pyc
-backend/*.pyo
-backend/*.pyd
-backend/.Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
 backend/db.sqlite3
 backend/db.sqlite3-journal
 backend/media/
 backend/staticfiles/
-backend/*.log
-backend/.pytest_cache/
-backend/.coverage
-backend/htmlcov/
-backend/*.egg-info/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
 backend/dist/
 backend/build/
