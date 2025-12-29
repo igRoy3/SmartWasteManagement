@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Waste Management - Admin Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <i class="fas fa-recycle"></i>
+                <h1>Smart Waste Management</h1>
+                <p>Admin Dashboard</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div id="login-error" class="error-message"></div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard-container" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-recycle"></i>
+                <span>Waste Management</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="overview">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="reports">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="#" class="nav-item" data-page="collectors">
+                    <i class="fas fa-users"></i>
+                    <span>Collectors</span>
+                </a>
+                <a href="#" class="nav-item" data-page="map">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Map View</span>
+                </a>
+                <a href="#" class="nav-item" data-page="analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button id="sidebar-toggle" class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="page-title">Dashboard Overview</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span id="user-name">Admin</span>
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Overview Page -->
+                <div id="overview-page" class="page active">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon total">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="stat-total">0</h3>
+                                <p>Total Reports</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon pending">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="stat-pending">0</h3>
+                                <p>Pending</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon progress">
+                                <i class="fas fa-spinner"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="stat-inprogress">0</h3>
+                                <p>In Progress</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon completed">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="stat-completed">0</h3>
+                                <p>Completed</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon collectors">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="stat-collectors">0</h3>
+                                <p>Active Collectors</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon citizens">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="stat-citizens">0</h3>
+                                <p>Citizens</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Reports -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Recent Reports</h2>
+                            <a href="#" class="view-all" data-page="reports">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-reports">
+                                    <tr>
+                                        <td colspan="6" class="loading">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Page -->
+                <div id="reports-page" class="page">
+                    <div class="page-header">
+                        <div class="filters">
+                            <select id="filter-status" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="assigned">Assigned</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <select id="filter-waste-type" class="filter-select">
+                                <option value="">All Waste Types</option>
+                                <option value="organic">Organic</option>
+                                <option value="recyclable">Recyclable</option>
+                                <option value="hazardous">Hazardous</option>
+                                <option value="electronic">Electronic</option>
+                                <option value="mixed">Mixed</option>
+                            </select>
+                            <input type="text" id="filter-search" class="filter-search" placeholder="Search reports...">
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Reported By</th>
+                                        <th>Assigned To</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-table">
+                                    <tr>
+                                        <td colspan="8" class="loading">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <div id="pagination" class="pagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collectors Page -->
+                <div id="collectors-page" class="page">
+                    <div class="page-header">
+                        <input type="text" id="collector-search" class="filter-search" placeholder="Search collectors...">
+                    </div>
+                    <div class="collectors-grid" id="collectors-grid">
+                        <div class="loading">Loading collectors...</div>
+                    </div>
+                </div>
+
+                <!-- Map Page -->
+                <div id="map-page" class="page">
+                    <div class="map-container">
+                        <div id="reports-map"></div>
+                    </div>
+                    <div class="map-legend">
+                        <div class="legend-item">
+                            <span class="legend-marker pending"></span> Pending
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-marker assigned"></span> Assigned
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-marker in-progress"></span> In Progress
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-marker completed"></span> Completed
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Page -->
+                <div id="analytics-page" class="page">
+                    <!-- Trend Cards -->
+                    <div class="analytics-trend-cards">
+                        <div class="trend-card">
+                            <div class="trend-icon reports">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="trend-info">
+                                <h4>Reports This Week</h4>
+                                <div class="trend-value">
+                                    <span id="trend-reports-current">0</span>
+                                    <span id="trend-reports-change" class="trend-change"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trend-card">
+                            <div class="trend-icon completions">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="trend-info">
+                                <h4>Completed This Week</h4>
+                                <div class="trend-value">
+                                    <span id="trend-completions-current">0</span>
+                                    <span id="trend-completions-change" class="trend-change"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trend-card">
+                            <div class="trend-icon resolution">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="trend-info">
+                                <h4>Avg Resolution Time</h4>
+                                <div class="trend-value">
+                                    <span id="avg-resolution-time">--</span>
+                                    <span class="trend-unit">hours</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Reports by Status</h2>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="status-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Reports by Waste Type</h2>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="waste-type-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card full-width">
+                            <div class="card-header">
+                                <h2>Reports Over Time (Last 30 Days)</h2>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="timeline-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Reports by Hour of Day</h2>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="hourly-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Reports by Day of Week</h2>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="weekly-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card full-width">
+                            <div class="card-header">
+                                <h2>Completion Rate Trend</h2>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="completion-trend-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Top Collectors</h2>
+                            </div>
+                            <div class="card-body">
+                                <div id="top-collectors" class="top-collectors-list"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Collector Performance</h2>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="collector-performance-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Report Detail Modal -->
+    <div id="report-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Report Details</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="report-detail-content">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Collector Modal -->
+    <div id="assign-modal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Assign Collector</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="assign-form">
+                    <input type="hidden" id="assign-report-id">
+                    <div class="form-group">
+                        <label for="collector-select">Select Collector</label>
+                        <select id="collector-select" required>
+                            <option value="">Choose a collector...</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Assign</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
