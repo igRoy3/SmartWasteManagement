@@ -217,6 +217,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://10.0.2.2:8000',
     'http://192.168.29.181:8000',
+    'https://smart-waste-backend-mcld.onrender.com',  # Production domain
 ]
 CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
 CSRF_COOKIE_HTTPONLY = False
