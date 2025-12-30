@@ -20,7 +20,7 @@ def store_previous_status(sender, instance, **kwargs):
             old_instance = GarbageReport.objects.get(pk=instance.pk)
             _previous_status[instance.pk] = {
                 'status': old_instance.status,
-                'collector_id': old_instance.collector_id
+                'collector_id': old_instance.assigned_to_id if old_instance.assigned_to else None
             }
         except GarbageReport.DoesNotExist:
             pass
@@ -42,8 +42,8 @@ def broadcast_report_update(sender, instance, created, **kwargs):
         'latitude': str(instance.latitude) if instance.latitude else None,
         'longitude': str(instance.longitude) if instance.longitude else None,
         'created_at': instance.created_at.isoformat() if instance.created_at else None,
-        'reporter_id': instance.reporter_id,
-        'collector_id': instance.collector_id,
+        'reporter_id': instance.reported_by_id if instance.reported_by else None,
+        'collector_id': instance.assigned_to_id if instance.assigned_to else None,
     }
     
     if created:
@@ -83,9 +83,9 @@ def broadcast_report_update(sender, instance, created, **kwargs):
         )
         
         # Notify the reporter
-        if instance.reporter_id:
+        if instance.reported_by_id:
             async_to_sync(channel_layer.group_send)(
-                f'user_{instance.reporter_id}',
+                f'user_{instance.reported_by_id}',
                 {
                     'type': 'report_updated',
                     'report': report_data
@@ -93,10 +93,10 @@ def broadcast_report_update(sender, instance, created, **kwargs):
             )
         
         # Handle assignment
-        if instance.collector_id and instance.collector_id != old_collector_id:
+        if instance.assigned_to_id and instance.assigned_to_id != old_collector_id:
             # Notify the assigned collector
             async_to_sync(channel_layer.group_send)(
-                f'user_{instance.collector_id}',
+                f'user_{instance.assigned_to_id}',
                 {
                     'type': 'task_update',
                     'task': report_data
@@ -109,13 +109,13 @@ def broadcast_report_update(sender, instance, created, **kwargs):
                 {
                     'type': 'report_assigned',
                     'report': report_data,
-                    'collector_id': instance.collector_id
+                    'collector_id': instance.assigned_to_id
                 }
             )
             
             # Notify user of assignment
             async_to_sync(channel_layer.group_send)(
-                f'user_{instance.collector_id}',
+                f'user_{instance.assigned_to_id}',
                 {
                     'type': 'notification',
                     'title': 'New Task Assigned',
@@ -127,7 +127,7 @@ def broadcast_report_update(sender, instance, created, **kwargs):
         # Handle status change
         if old_status and instance.status != old_status:
             # Notify the reporter of status change
-            if instance.reporter_id:
+            if instance.reported_by_id:
                 status_messages = {
                     'assigned': 'Your report has been assigned to a collector',
                     'in_progress': 'Collection is now in progress',
@@ -140,7 +140,7 @@ def broadcast_report_update(sender, instance, created, **kwargs):
                 )
                 
                 async_to_sync(channel_layer.group_send)(
-                    f'user_{instance.reporter_id}',
+                    f'user_{instance.reported_by_id}',
                     {
                         'type': 'notification',
                         'title': 'Report Status Updated',
