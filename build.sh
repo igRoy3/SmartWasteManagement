@@ -11,13 +11,29 @@ python manage.py collectstatic --no-input
 # Apply database migrations
 python manage.py migrate
 
-# Create superuser if it doesn't exist
+# Create superuser with full permissions if it doesn't exist
 python manage.py shell << EOF
 from django.contrib.auth import get_user_model
 User = get_user_model()
 if not User.objects.filter(username='admin').exists():
-    User.objects.create_superuser('admin', 'admin@wastemanagement.com', 'admin123')
-    print('Superuser created successfully')
+    admin = User.objects.create_superuser(
+        username='admin',
+        email='admin@wastemanagement.com',
+        password='admin123',
+        first_name='Admin',
+        last_name='User'
+    )
+    admin.is_staff = True
+    admin.is_superuser = True
+    admin.is_admin = True
+    admin.save()
+    print('Superuser created successfully with full permissions')
 else:
-    print('Superuser already exists')
+    # Update existing admin user to ensure proper permissions
+    admin = User.objects.get(username='admin')
+    admin.is_staff = True
+    admin.is_superuser = True
+    admin.is_admin = True
+    admin.save()
+    print('Admin user permissions updated')
 EOF
