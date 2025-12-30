@@ -80,7 +80,7 @@ class CollectorTaskListView(generics.ListAPIView):
     def get_queryset(self):
         return GarbageReport.objects.filter(
             assigned_to=self.request.user
-        ).exclude(status='completed')
+        )
 
 
 class CollectorTaskDetailView(generics.RetrieveAPIView):
